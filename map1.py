@@ -16,14 +16,19 @@ def color_producer(elevation):
 
 map = folium.Map(location=[38.58, -99.09], zoom_start=3, tiles="Stamen Terrain")
 
-fg = folium.FeatureGroup(name="My map")
+fgv = folium.FeatureGroup(name="vocanoes")
 
 for lt, ln, el in zip(lat, lon, elev): 
-    fg.add_child(folium.Marker(location=[lt, ln], popup = str(el) + " meters", icon = folium.Icon(color=color_producer(el))))
+    fgv.add_child(folium.Marker(location=[lt, ln], popup = str(el) + " meters", icon = folium.Icon(color=color_producer(el))))
 
-fg.add_child(folium.GeoJson(data = open('world.json', 'r', encoding='utf-8-sig').read(), 
+fgp = folium.FeatureGroup(name="Population")
+
+fgp.add_child(folium.GeoJson(data = open('world.json', 'r', encoding='utf-8-sig').read(), 
 style_function = lambda x: {'fillColor': 'green' if x['properties']['POP2005'] < 30000000 else 'orange'
 if 30000000 <= x['properties']['POP2005'] < 90000000 else 'red'}))
 
-map.add_child(fg)
+map.add_child(fgp)
+map.add_child(fgv)
+map.add_child(folium.LayerControl())
+
 map.save("Map1.html")
